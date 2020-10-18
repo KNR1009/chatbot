@@ -1,7 +1,8 @@
 import React from 'react';
 import './assets/styles/style.css'
-import defaultDataset from './dataset'
-import { AnswersList, Chats, FormDialog} from "./components/index";
+import { AnswersList, Chats } from "./components/index";
+import  FormDialog  from "./components/Forms/FormDialog";
+import {db} from "./firebase/index";
 
 
 export default class App extends React.Component {
@@ -11,7 +12,7 @@ export default class App extends React.Component {
       answers: [],
       chats: [],
       currentID: "init",
-      dataset: defaultDataset,
+      dataset:{},
       open: false,
     };
 
@@ -24,7 +25,7 @@ export default class App extends React.Component {
     const chats = this.state.chats;
     chats.push({
       text: this.state.dataset[nextQuestionId].question,
-      type: "question",
+      type: 'question',
     });
 
     this.setState({
@@ -98,10 +99,29 @@ export default class App extends React.Component {
     });
   }
 
-  componentDidMount() {
-    const initAnswer = "";
-    this.selectAnswer(initAnswer, this.state.currentID);
+  initDataset = (dataset) => {
+    this.setState({dataset:dataset})
   }
+
+  componentDidMount() {
+      (async() => {
+        const dataset = this.state.dataset
+
+        await db.collection('questions').get().then(snapshots => {
+          snapshots.forEach(doc => {
+            const id = doc.id
+            const data = doc.data()
+            dataset[id] = data
+          })
+        })
+        this.initDataset(dataset);
+         const initAnswer = "";
+         this.selectAnswer(initAnswer, this.state.currentID);
+      })()
+  
+  }
+
+  
 
   componentDidUpdate() {
     // スクロールが自動的に下がる実装する

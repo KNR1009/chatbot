@@ -22,9 +22,6 @@ export default class FormDialog extends React.Component {
     this.inputName = this.inputName.bind();
   }
 
-  
-  
-
   // 入力値を更新する
   inputName = (event) => {
     this.setState({ name: event.target.value });
@@ -39,42 +36,43 @@ export default class FormDialog extends React.Component {
 
   // フォームを送信する内容
 
-  submitForm(){
+  submitForm() {
+    // 入力値を変数に格納する
+    const name = "テスト";
+    const email = "emailです";
+    const description = "テストです";
 
-      // 入力値を変数に格納する
-      const name = 'テスト'
-      const email = 'emailです'
-      const description = 'テストです'
+    // スラッグに送る処理
+    const payload = {
+      text:
+        "お問い合わせがありました\n" +
+        "お名前" +
+        name +
+        "\n" +
+        "Email" +
+        email +
+        "\n" +
+        "お問い合わせ内容: \n" +
+        description,
+    };
 
-      // スラッグに送る処理
-      const payload = {
-        text: 'お問い合わせがありました\n'+
-        'お名前' + name + '\n' +
-        'Email' + email + '\n' +
-        'お問い合わせ内容: \n' + description
-      }
+    const url =
+      "https://hooks.slack.com/services/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";
 
-        const url = "https://hooks.slack.com/services/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";
-
-        fetch(url, {
-          method: 'POST',
-          body: JSON.stringify(payload)
-        }).then(()=>{
-            alert('送信が完了しました。追って連絡します')
-            // stateを初期化する
-            this.setState({
-              name: "",
-              email: "",
-              description: "",
-            })
-            return this.props.handleClose()
-        })
-
-
-      }
-
-  
-
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }).then(() => {
+      alert("送信が完了しました。追って連絡します");
+      // stateを初期化する
+      this.setState({
+        name: "",
+        email: "",
+        description: "",
+      });
+      return this.props.handleClose();
+    });
+  }
 
   render() {
     return (
